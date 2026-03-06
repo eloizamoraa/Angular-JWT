@@ -14,34 +14,34 @@ export class OrganizacionService {
 
   constructor(private http: HttpClient) {}
 
-  getOrganizaciones(): Observable<any> {
-    return this.http.get(
+  getOrganizaciones(): Observable<Organizacion[]> {
+    return this.http.get<Organizacion[]>(
       `${this.baseUrl}/organizaciones`
     );
   }
 
-  getOrganizacionById(id: string): Observable<any> {
-    return this.http.get(
+  getOrganizacionById(id: string): Observable<Organizacion> {
+    return this.http.get<Organizacion>(
       `${this.baseUrl}/organizaciones/${id}`
     );
   }
 
-  createOrganizacion(name: string): Observable<any> {
-    return this.http.post(
+  createOrganizacion(name: string): Observable<Organizacion> {
+    return this.http.post<Organizacion>(
       `${this.baseUrl}/organizaciones`,
       { name }
     );
   }
 
-  updateOrganizacion(id: string, name: string): Observable<any> {
-    return this.http.put(
+  updateOrganizacion(id: string, name: string): Observable<Organizacion> {
+    return this.http.put<Organizacion>(
       `${this.baseUrl}/organizaciones/${id}`,
       { name }
     );
   }
 
-  deleteOrganizacion(id: string): Observable<any> {
-    return this.http.delete(
+  deleteOrganizacion(id: string): Observable<void> {
+    return this.http.delete<void>(
       `${this.baseUrl}/organizaciones/${id}`
     );
   }
