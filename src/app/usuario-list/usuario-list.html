@@ -67,7 +67,7 @@
 
 </div>
 
-<div *ngIf="!loading && !errorMsg && usuariosFiltrados.length > 0">
+<div *ngIf="!loading && !errorMsg && usuariosVisibles.length > 0">
   <table style="width: 100%; text-align: left; margin-top: 20px; border-collapse: collapse;">
     <thead>
       <tr style="border-bottom: 1px solid #ccc;">
@@ -78,7 +78,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let u of usuariosFiltrados" style="border-bottom: 1px solid #eee;">
+      <tr *ngFor="let u of usuariosVisibles" style="border-bottom: 1px solid #eee;">
         <td style="padding: 8px 0;">{{ u.name }}</td>
         <td>{{ u.email }}</td>
         <td>{{ organizacionLabel(u) }}</td> <td>
@@ -90,6 +90,21 @@
   </table>
 </div>
 
+<div style="margin-top: 10px;">
+  <button 
+    *ngIf="!mostrarTodosUsuarios && usuariosFiltrados.length > limite"
+    class="btn"
+    (click)="mostrarMas()">
+    Mostrar más
+  </button>
 
+  <button 
+    *ngIf="mostrarTodosUsuarios"
+    class="btn"
+    (click)="mostrarTodosUsuarios = false"
+    style="margin-left: 10px;">
+    Mostrar menos
+  </button>
+</div>
 
 <button type="button" class="btn" (click)="load()" style="margin-top: 15px;">Recargar</button>

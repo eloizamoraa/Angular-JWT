@@ -27,7 +27,8 @@ export class UsuarioList implements OnInit {
   editando = false;
   usuarioEditId: string | null = null;
   expanded: { [key: string]: boolean } = {};
-
+  limite = 10;
+  mostrarTodosUsuarios = false;
 
   constructor(private api: UsuarioService, private fb: FormBuilder, private cdr: ChangeDetectorRef, private dialog: MatDialog) {
     this.usuarioForm = this.fb.group({
@@ -114,6 +115,18 @@ loadOrganizaciones(): void {
   });
 }
 
+//Función: mostrar más
+  mostrarMas(): void {
+  this.mostrarTodosUsuarios = true;
+  } 
+
+  get usuariosVisibles(): Usuario[] {
+    if (this.mostrarTodosUsuarios) {
+      return this.usuariosFiltrados;
+    }
+    return this.usuariosFiltrados.slice(0, this.limite);
+  }
+  
 guardar(): void {
   
   if (this.usuarioForm.invalid) return;
