@@ -8,97 +8,133 @@
 /> </p>
 
 <!-- Mensajes de estado -->
-<p *ngIf="loading">Cargando...</p>
-<p *ngIf="!loading && errorMsg">{{ errorMsg }}</p>
+@if (loading) {
+  <p>Cargando...</p>
+}
+@if (!loading && errorMsg) {
+  <p>{{ errorMsg }}</p>
+}
 
 <!-- Mensaje si no hay organizaciones -->
-<ul class="list" *ngIf="!loading && !errorMsg && organizaciones.length > 0">
+@if (!loading && !errorMsg && organizaciones.length > 0) {
+
   <!-- Lista de organizaciones -->
-  <li class="card" *ngFor="let org of organizacionesVisibles; trackBy: trackById"> 
-    
-    <!-- Nombre con truncado si supera de 15 caracteres y botón para expandir -->
-    <div>
-      <span class="name">
-      {{
-        expanded[org._id] || org.name.length <= 15
-          ? org.name
-          : (org.name | slice:0:15) + '...'
-      }}
-      </span>
+  <ul class="list">
 
-      <!-- Botón para mostrar más o menos si el nombre es largo -->
-      <button *ngIf="org.name.length > 15"
-              class="btn"
-              (click)="toggleExpand(org._id)">
-        {{ expanded[org._id] ? 'Mostrar menos' : 'Mostrar más' }}
-      </button>
-    </div>
+    @for (org of organizacionesVisibles; track org._id) {
 
-    <!-- ID y botones de acción -->
-    <div>
-      <span class="muted">{{ org._id }}</span>
+      <li class="card"> 
+        
+        <!-- Nombre con truncado si supera de 15 caracteres y botón para expandir -->
+        <div>
+          <span class="name">
+          {{
+            expanded[org._id] || org.name.length <= 15
+              ? org.name
+              : (org.name | slice:0:15) + '...'
+          }}
+          </span>
 
-      <!-- BOTÓN EDITAR -->
-      <button type="button"
-              class="btn"
-              (click)="editar(org)">
-        Editar
-      </button>
+          <!-- Botón para mostrar más o menos si el nombre es largo -->
+          @if (org.name.length > 15) {
+            <button class="btn"
+                    (click)="toggleExpand(org._id)">
+              {{ expanded[org._id] ? 'Mostrar menos' : 'Mostrar más' }}
+            </button>
+          }
+        </div>
 
-      <!-- BOTÓN ELIMINAR -->
-      <button type="button"
-              class="btn delete-btn"
-              (click)="confirmDelete(org._id, org.name)">
-        X
-      </button>
-    </div>
+        <!-- ID y botones de acción -->
+        <div>
+          <span class="muted">{{ org._id }}</span>
 
-  </li>
-</ul>
+          <!-- BOTÓN EDITAR -->
+          <button type="button"
+                  class="btn"
+                  (click)="editar(org)">
+            Editar
+          </button>
+
+          <!-- BOTÓN ELIMINAR -->
+          <button type="button"
+                  class="btn delete-btn"
+                  (click)="confirmDelete(org._id, org.name)">
+            X
+          </button>
+        </div>
+
+        <!-- LISTA DE USUARIOS DE LA ORGANIZACIÓN -->
+        <div>
+          <strong>Usuarios:</strong>
+
+          @if (org.users.length > 0) {
+
+            <ul>
+              @for (u of org.users; track u._id) {
+                <li>{{ u.name }}</li>
+              }
+            </ul>
+
+          } @else {
+            <p class="muted">Sin usuarios</p>
+          }
+
+        </div>
+
+      </li>
+
+    }
+
+  </ul>
+
+}
 
 <!-- Botones para mostrar más/menos organizaciones si supera el limite -->
-<button 
-  *ngIf="!mostrarTodasOrganizaciones && organizaciones.length > limite"
-  class="btn"
-  (click)="mostrarMas()">
+@if (!mostrarTodasOrganizaciones && organizaciones.length > limite) {
+  <button class="btn"
+          (click)="mostrarMas()">
+    Mostrar más
+  </button>
+}
 
-  Mostrar más
-</button>
-<button 
-  *ngIf="mostrarTodasOrganizaciones"
-  class="btn"
-  (click)="mostrarTodasOrganizaciones = false">
+@if (mostrarTodasOrganizaciones) {
+  <button class="btn"
+          (click)="mostrarTodasOrganizaciones = false">
+    Mostrar menos
+  </button>
+}
 
-  Mostrar menos
-</button>
-
-<p *ngIf="!loading && !errorMsg && organizaciones.length === 0">
-  No hay organizaciones.
-</p>
+@if (!loading && !errorMsg && organizaciones.length === 0) {
+  <p>No hay organizaciones.</p>
+}
 
 <!-- Formulario para añadir/editar organización -->
 <button type="button" class="btn" (click)="mostrarFormulario()">
   Añadir
 </button>
 
-<div *ngIf="mostrarForm" class="card">
+@if (mostrarForm) {
 
-  <h3>{{ editando ? 'Editar Organización' : 'Nueva Organización' }}</h3>
+  <div class="card">
 
-  <form [formGroup]="organizacionForm" (ngSubmit)="guardar()">
+    <h3>{{ editando ? 'Editar Organización' : 'Nueva Organización' }}</h3>
 
-    <label>Nombre:</label>
-    <input type="text" formControlName="nombre" />
+    <form [formGroup]="organizacionForm" (ngSubmit)="guardar()">
 
-    <button type="submit"
-            class="btn"
-            [disabled]="organizacionForm.invalid">
-      {{ editando ? 'Actualizar' : 'Guardar' }}
-    </button>
+      <label>Nombre:</label>
+      <input type="text" formControlName="nombre" />
 
-  </form>
+      <button type="submit"
+              class="btn"
+              [disabled]="organizacionForm.invalid">
+        {{ editando ? 'Actualizar' : 'Guardar' }}
+      </button>
 
-</div>
+    </form>
+
+  </div>
+
+}
 
 <!-- Botón para recargar la lista -->
 <button type="button" class="btn" (click)="load()">
