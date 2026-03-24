@@ -1,5 +1,23 @@
 <h2>Usuarios</h2>
 
+<div class="presence-panel" *ngIf="usuarios.length > 0">
+  <label for="presence-user">Sesión activa:</label>
+  <select
+    id="presence-user"
+    [ngModel]="currentSessionUserId"
+    (ngModelChange)="selectSessionUser($event)"
+  >
+    <option *ngFor="let user of usuarios" [value]="user._id">{{ user.name }}</option>
+  </select>
+
+  <span class="presence-chip" [class.offline]="!presenceConnected">
+    {{ presenceConnected ? 'Conectado' : 'Desconectado' }}
+  </span>
+
+  <small class="presence-count">Usuarios activos: {{ connectedUsersCount }}</small>
+  <small class="presence-count">Conexiones activas: {{ activeConnectionsCount }}</small>
+</div>
+
 <!-- Buscador: buscar por nombre -->
 <p> <input
   type="text"
@@ -88,6 +106,7 @@
         <th>Nombre</th>
         <th>Email</th>
         <th>Organización</th>
+        <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -97,7 +116,12 @@
       <tr *ngFor="let u of usuariosVisibles" style="border-bottom: 1px solid #eee;">
         <td style="padding: 8px 0;">{{ u.name }}</td>
         <td>{{ u.email }}</td>
-        <td>{{ organizacionLabel(u) }}</td> <td>
+        <td>{{ organizacionLabel(u) }}</td>
+        <td>
+          <span class="status-dot" [class.active]="isActive(u._id)"></span>
+          {{ isActive(u._id) ? 'Activo' : 'Inactivo' }}
+        </td>
+        <td>
           <button (click)="editar(u)">Editar</button>
           <button (click)="confirmDelete(u._id, u.name)">Borrar</button>
         </td>

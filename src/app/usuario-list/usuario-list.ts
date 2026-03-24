@@ -1,21 +1,25 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { UsuarioService } from '../services/usuario.service';
 import { Usuario } from '../models/usuario.model';
 import { Organizacion } from '../models/organizacion.model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl, AbstractControl, ValidationErrors, FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog';
+import { Subscription } from 'rxjs';
+
+import { PresenciaService } from '../services/presencia.service';
 
 
 @Component({
   selector: 'app-usuario-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './usuario-list.html',
   styleUrls: ['./usuario-list.css'],
 })
-export class UsuarioList implements OnInit {
+export class UsuarioList implements OnInit, OnDestroy {
   usuarios: Usuario[] = [];
   organizaciones: Organizacion[] = [];
   usuariosFiltrados: Usuario[] = [];
@@ -29,8 +33,25 @@ export class UsuarioList implements OnInit {
   expanded: { [key: string]: boolean } = {};
   limite = 10;
   mostrarTodosUsuarios = false;
+  currentSessionUserId: string | null = null;
+  presenceConnected = false;
+  connectedUsersCount = 0;
+  activeConnectionsCount = 0;
 
-  constructor(private api: UsuarioService, private fb: FormBuilder, private cdr: ChangeDetectorRef, private dialog: MatDialog) {
+  private readonly activeUserIds = new Set<string>();
+  private readonly subscriptions = new Subscription();
+  private readonly isBrowser: boolean;
+
+  constructor(
+    private api: UsuarioService,
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private presencia: PresenciaService,
+    @Inject(PLATFORM_ID) platformId: object,
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+
     this.usuarioForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -60,14 +81,51 @@ export class UsuarioList implements OnInit {
   ngOnInit(): void {
     this.load();
     this.loadOrganizaciones();
+    if (this.isBrowser) {
+      this.currentSessionUserId = localStorage.getItem('presenceUserId');
+    }
+
+    this.subscriptions.add(
+      this.presencia.activeUserIds$.subscribe((ids) => {
+        this.activeUserIds.clear();
+        ids.forEach((id) => this.activeUserIds.add(id));
+      }),
+    );
+
+    this.subscriptions.add(
+      this.presencia.isConnected$.subscribe((isConnected) => {
+        this.presenceConnected = isConnected;
+      }),
+    );
+
+    this.subscriptions.add(
+      this.presencia.connectedCount$.subscribe((count) => {
+        this.connectedUsersCount = count;
+      }),
+    );
+
+    this.subscriptions.add(
+      this.presencia.connectionsCount$.subscribe((count) => {
+        this.activeConnectionsCount = count;
+      }),
+    );
     
-    this.searchControl.valueChanges.subscribe(value => {
-      const term = value?.toLowerCase() ?? '';
-  
-      this.usuariosFiltrados = this.usuarios.filter(org =>
-        org.name.toLowerCase().includes(term)
-      );
-    });
+    this.subscriptions.add(
+      this.searchControl.valueChanges.subscribe((value) => {
+        const term = value?.toLowerCase() ?? '';
+
+        this.usuariosFiltrados = this.usuarios.filter((org) =>
+          org.name.toLowerCase().includes(term),
+        );
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+    if (this.isBrowser) {
+      this.presencia.disconnect();
+    }
   }
 
   load(): void {
@@ -79,6 +137,7 @@ export class UsuarioList implements OnInit {
       next: (res) => {
         this.usuarios = res;
         this.usuariosFiltrados = [...this.usuarios];
+        this.ensurePresenceConnection();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -94,6 +153,36 @@ export class UsuarioList implements OnInit {
   //Función: trackBy para optimizar el ngFor
   trackById(_index: number, u: Usuario): string {
     return u._id;
+  }
+
+  isActive(userId: string): boolean {
+    return this.activeUserIds.has(userId);
+  }
+
+  selectSessionUser(userId: string): void {
+    if (!userId || !this.isBrowser) {
+      return;
+    }
+
+    const selectedUser = this.usuarios.find((user) => user._id === userId);
+    const username = selectedUser?.name?.trim() || userId;
+
+    this.currentSessionUserId = userId;
+    localStorage.setItem('presenceUserId', userId);
+    this.presencia.connect(userId, username);
+  }
+
+  private ensurePresenceConnection(): void {
+    if (!this.usuarios.length || !this.isBrowser) {
+      return;
+    }
+
+    const selectedId = this.currentSessionUserId;
+    const selectedExists =
+      !!selectedId && this.usuarios.some((user) => user._id === selectedId);
+
+    const userIdToConnect = selectedExists ? selectedId : this.usuarios[0]._id;
+    this.selectSessionUser(userIdToConnect);
   }
 
   //Función: obtener nombre de organización para mostrar en la tabla
@@ -114,7 +203,6 @@ loadOrganizaciones(): void {
   this.api.getOrganizaciones().subscribe({
     next: (res) => {
       this.organizaciones = res;
-      console.log('Organizaciones:', this.organizaciones);
     },
     error: (err) => console.error(err)
   });

@@ -3,19 +3,37 @@
     <span class="logo">mini-spa</span>
   </div>
 
-  <nav class="nav">
-    <a
-      routerLink="/"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Organizaciones
-    </a>
+  @if (isAuthenticated()) {
+    <nav class="nav" aria-label="Navegacion principal">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Organizaciones
+      </a>
 
-    <a routerLink="/usuarios" routerLinkActive="active">
-      Usuarios
-    </a>
-  </nav>
+      @if (isAdmin()) {
+        <a routerLink="/usuarios" routerLinkActive="active">
+          Usuarios
+        </a>
+      }
+    </nav>
+  }
+
+  <div class="session-tools">
+    @if (isAuthenticated()) {
+      <span class="role-badge">{{ currentRole() }}</span>
+      <span class="user-label">{{ displayName() }}</span>
+      <button type="button" class="session-btn" (click)="logout()">
+        Cerrar sesion
+      </button>
+    } @else {
+      <a class="session-link" routerLink="/login" routerLinkActive="active">
+        Iniciar sesion
+      </a>
+    }
+  </div>
 </header>
 
 <main class="container">

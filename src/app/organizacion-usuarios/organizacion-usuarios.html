@@ -1,0 +1,35 @@
+<div class="users-manager">
+  <strong>Usuarios:</strong>
+
+  @if (usuariosEnOrganizacion().length > 0) {
+    <ul class="users-list">
+      @for (u of usuariosEnOrganizacion(); track u._id) {
+        <li>
+          <span>{{ u.name }}</span>
+          <button type="button" class="btn delete-btn" (click)="quitarUsuario(u._id)">
+            Quitar
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="muted">Sin usuarios</p>
+  }
+
+  @if (usuariosDisponibles().length > 0) {
+    <div class="add-user-row">
+      <select [formControl]="usuarioSeleccionado">
+        <option value="">Selecciona un usuario</option>
+        @for (u of usuariosDisponibles(); track u._id) {
+          <option [value]="u._id">{{ u.name }}</option>
+        }
+      </select>
+
+      <button type="button" class="btn" (click)="agregarUsuario()">
+        Añadir
+      </button>
+    </div>
+  } @else {
+    <p class="muted">No hay usuarios disponibles para añadir</p>
+  }
+</div>

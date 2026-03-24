@@ -43,10 +43,27 @@ export class UsuarioService {
   }
 
   //Función: actualizar usuario existente
-  updateUsuario(id: string, name: string, email: string, password: string, organizacion: string): Observable<Usuario> {
+  updateUsuario(
+    id: string,
+    name: string,
+    email: string,
+    password: string | null,
+    organizacion: string | null,
+  ): Observable<Usuario> {
+    const payload: {
+      name: string;
+      email: string;
+      organizacion: string | null;
+      password?: string;
+    } = { name, email, organizacion };
+
+    if (password && password.trim() !== '') {
+      payload.password = password;
+    }
+
     return this.http.put<Usuario>(
       `${this.baseUrl}/usuarios/${id}`,
-      { name, email, password, organizacion } 
+      payload 
     );
   }
 

@@ -63,23 +63,12 @@
           </button>
         </div>
 
-        <!-- LISTA DE USUARIOS DE LA ORGANIZACIÓN -->
-        <div>
-          <strong>Usuarios:</strong>
-
-          @if (org.users.length > 0) {
-
-            <ul>
-              @for (u of org.users; track u._id) {
-                <li>{{ u.name }}</li>
-              }
-            </ul>
-
-          } @else {
-            <p class="muted">Sin usuarios</p>
-          }
-
-        </div>
+        <app-organizacion-usuarios
+          [organizacion]="org"
+          [todosUsuarios]="usuarios"
+          (anadir)="anadirUsuarioAOrganizacion(org, $event)"
+          (eliminar)="quitarUsuarioDeOrganizacion($event)">
+        </app-organizacion-usuarios>
 
       </li>
 

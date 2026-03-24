@@ -44,3 +44,48 @@ h2 {
 .delete-btn {
   margin-left: 8px;
 }
+
+.presence-panel {
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.presence-panel select {
+  min-width: 240px;
+  padding: 4px 8px;
+}
+
+.presence-chip {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f5f2d;
+  background: #e9f8ee;
+}
+
+.presence-chip.offline {
+  color: #7a2e2e;
+  background: #fdeceb;
+}
+
+.presence-count {
+  color: #555;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: #c9c9c9;
+}
+
+.status-dot.active {
+  background: #2aaf55;
+}

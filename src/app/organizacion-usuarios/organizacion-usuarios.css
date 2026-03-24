@@ -1,0 +1,25 @@
+.users-manager {
+  margin-top: 10px;
+}
+
+.users-list {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+.users-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.add-user-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.add-user-row select {
+  min-width: 220px;
+}

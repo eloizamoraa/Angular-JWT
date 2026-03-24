@@ -1,0 +1,70 @@
+.login-card {
+  max-width: 420px;
+  margin: 24px auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.subtitle {
+  margin: 0 0 6px;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+form {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+input:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 1px;
+}
+
+button {
+  margin-top: 6px;
+  border: 1px solid #1f2937;
+  background: #111827;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0;
+  font-size: 12px;
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 12px;
+}
