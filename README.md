@@ -124,11 +124,11 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
 
-## Exercici Angular - JWT
+## Exercici Angular - Websockets
 # Tasques a realitzar:
-Afegir un component per accedir a aquest nou recurs
+Sincronitzar la interfície d'Angular amb esdeveniments asíncrons de Socket.io
 # Ús de la IA:
-He utilitzat Copilot per compendre pas a pas el que anava fent i així entendre l'us i l'aplicació de JWT.
+He utilitzat Copilot per compendre pas a pas el que anava fent i així entendre l'us i l'aplicació de WebSockets.
 
 
 
