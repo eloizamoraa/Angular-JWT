@@ -124,12 +124,11 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
 
-## Exercici Angular
-La tasca 1 s’ha implementat correctament.
-S’ha modificat el model d’Organització per incloure un array de referències a usuaris.
+## Exercici Angular - JWT
+# Tasques a realitzar:
+Afegir un component per accedir a aquest nou recurs
+# Ús de la IA:
+He utilitzat Copilot per compendre pas a pas el que anava fent i així entendre l'us i l'aplicació de JWT.
 
-En aquesta tasca m’he encallat.
-Hi ha hagut un error de sincronització entre id de organització de un usuario y desde una ona organització.
-He utilitzat ChatGPT per intentar corretgir l'error.
 
-Si el backend no hagués implementat el .populate(), el frontend hauria de fer 10 peticions HTTP addicionals (una per cada usuari) per obtenir els seus noms.
+
