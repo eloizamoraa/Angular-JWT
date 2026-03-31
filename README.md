@@ -126,9 +126,9 @@ For more information on using the Angular CLI, including detailed command refere
 
 ## Exercici Angular - Websockets
 # Tasques a realitzar:
-Sincronitzar la interfície d'Angular amb esdeveniments asíncrons de Socket.io
+Afegir un component per accedir a aquest nou recurs
 # Ús de la IA:
-He utilitzat Copilot per compendre pas a pas el que anava fent i així entendre l'us i l'aplicació de WebSockets.
+He utilitzat Copilot per compendre pas a pas el que anava fent i així entendre l'us i l'aplicació de JWT.
 
 
 
